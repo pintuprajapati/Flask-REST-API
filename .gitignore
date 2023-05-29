@@ -1,0 +1,14 @@
+# Compiled Python bytecode
+*.py[cod]
+*__pycache__
+**/migrations/**
+.env
+media/
+/env/
+/env-flask/
+/envflask/
+/other/
+
+# db
+instance/
+*db
