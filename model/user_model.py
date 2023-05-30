@@ -1,6 +1,7 @@
 import mysql.connector
 import json
 from flask import jsonify
+from utils import create_response
 class user_model():
 
     # Initializing constructor and establishing connection first.
@@ -19,10 +20,11 @@ class user_model():
         try:
             self.cur.execute("SELECT * FROM users")
             result = self.cur.fetchall()
-            return jsonify(result)  # Using Flask's jsonify to convert result to JSON response
+            return create_response(success=True, message="User Data fetched", status_code=200, data=result)
+            # return jsonify(result)  # Using Flask's jsonify to convert result to JSON response
             # return json.dumps(result) # converting to string
         except Exception as e:
-            print("➡ e :", e)
+            return create_response(success=False, message="Some error occured while fetching the data", status_code=400)
 
     # User POST Query
     def user_addone_model(self, data):
@@ -31,24 +33,24 @@ class user_model():
                              VALUES ('{data['name']}','{data['id']}','{data['email']}','{data['password']}','{data['phone']}','{data['role']}');")
             return "User created successfully"
         except Exception as e:
-            print("➡ e :", e)
+            return create_response(success=False, message="Some error occured while adding the data", status_code=400)
 
     # User UPDATE Query
     def user_update_model(self, data):
         try:
             self.cur.execute(f"UPDATE users SET name='{data['name']}', email='{data['email']}', phone='{data['phone']}', password='{data['password']}', role='{data['role']}' WHERE id={data['id']};")
             if self.cur.rowcount > 0:
-                return "User Updated successfully"
-            return "Nothing to update"
+                return create_response(success=True, message="User Updated successfully", status_code=200)
+            return create_response(success=False, message="Nothing to update", status_code=400)
         except Exception as e:
-            print("➡ e :", e)
+            return create_response(success=False, message="Some error occured while updating the data", status_code=400)
 
     # User DELETE Query
     def user_delete_model(self, id):
         try:
             self.cur.execute(f"DELETE FROM users WHERE id={id}")
             if self.cur.rowcount > 0:
-                return "User Deleted successfully"
-            return "Nothing to Delete"
+                return create_response(success=True, message="User Deleted successfully", status_code=200)
+            return create_response(success=False, message="Nothing to delete", status_code=400)
         except Exception as e:
-            print("➡ e :", e)
+            return create_response(success=False, message="Some error occured while deleting the data", status_code=400)
