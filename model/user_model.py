@@ -78,3 +78,29 @@ class user_model():
             return create_response(success=True, message="Nothing to delete", status_code=204)
         except Exception as e:
             return create_response(success=False, message="Some error occured while deleting the data", status_code=400)
+
+    def user_pagination_model(self, limit_rows, page_no):
+        start = (int(page_no) * int(limit_rows)) - int(limit_rows)
+
+        query = f"SELECT * from users LIMIT {start}, {limit_rows}"
+        try:
+            self.cur.execute(query)
+            result = self.cur.fetchall()
+            if len(result) > 0:
+                res = make_response({
+                        "message":"User Data fetched",
+                        "data": {
+                            "user": result,
+                            "page_no": page_no,
+                            "limit_rows": limit_rows
+                        },
+                        "status_code": 200,
+                    }, 200)
+                # res = create_response(success=True, message="User Data fetched", status_code=200, data=result)
+                res.headers['Access-Control-Allow-Origin'] = "*"
+                return res
+            else:
+                return create_response(success=True, message="NO User Data to be fetched", status_code=204, data=result)
+        except Exception as e:
+            return create_response(success=False, message="Some error occured while fetching the data", status_code=400)
+
