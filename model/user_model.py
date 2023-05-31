@@ -45,7 +45,24 @@ class user_model():
     # User UPDATE Query
     def user_update_model(self, data):
         try:
+            # query: UPDATE TABLE_NAME SET col=val, col=val WHERE id={id}}
             self.cur.execute(f"UPDATE users SET name='{data['name']}', email='{data['email']}', phone='{data['phone']}', password='{data['password']}', role='{data['role']}' WHERE id={data['id']};")
+            if self.cur.rowcount > 0:
+                return create_response(success=True, message="User Updated successfully", status_code=200)
+            return create_response(success=True, message="Nothing to update", status_code=204)
+        except Exception as e:
+            return create_response(success=False, message="Some error occured while updating the data", status_code=400)
+    
+    # User PATCH Query
+    def user_patch_model(self, data, id):
+        try:
+            # query: UPDATE TABLE_NAME SET col=val, col=val WHERE id={id}}
+            query = "UPDATE users SET "
+            for key in data:
+                query += f"{key}='{data[key]}', "
+            query = query[:-2] + f" WHERE id={id};"
+
+            self.cur.execute(query)
             if self.cur.rowcount > 0:
                 return create_response(success=True, message="User Updated successfully", status_code=200)
             return create_response(success=True, message="Nothing to update", status_code=204)
