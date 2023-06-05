@@ -19,7 +19,8 @@ class user_model():
     # User GET Query
     def user_getall_model(self):
         try:
-            self.cur.execute("SELECT * FROM users")
+            getall_query = "SELECT * FROM users"
+            self.cur.execute(getall_query)
             result = self.cur.fetchall()
             if len(result) > 0:
                 res = create_response(success=True, message="User Data fetched", status_code=200, data=result)
@@ -79,6 +80,7 @@ class user_model():
         except Exception as e:
             return create_response(success=False, message="Some error occured while deleting the data", status_code=400)
 
+    # Pagination Query
     def user_pagination_model(self, limit_rows, page_no):
         start = (int(page_no) * int(limit_rows)) - int(limit_rows)
 
@@ -103,4 +105,15 @@ class user_model():
                 return create_response(success=True, message="NO User Data to be fetched", status_code=204, data=result)
         except Exception as e:
             return create_response(success=False, message="Some error occured while fetching the data", status_code=400)
+
+    # Upload user's avatar
+    def user_avatar_upload_model(self, uid, filepath):
+        try:
+            update_query = f"UPDATE users SET avatar='{filepath}' WHERE id={uid}"
+            self.cur.execute(update_query)
+            if self.cur.rowcount > 0:
+                    return create_response(success=True, message="File Uploaded successfully", status_code=200)
+            return create_response(success=True, message="Nothing to upload", status_code=204)
+        except Exception as e:
+            return create_response(success=False, message="Some error occured while uploading the file", status_code=400)
 
