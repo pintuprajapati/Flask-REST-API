@@ -4,6 +4,7 @@ import json
 from flask import make_response, request
 import jwt
 import re
+from config.config import dbconfig
 
 class auth_model():
 
@@ -11,7 +12,13 @@ class auth_model():
     def __init__(self):
         # mysql database connection establishment between python and mysql
         try:
-            self.conn = mysql.connector.connect(host="localhost", user="flask_user", password="Admin@123", database="flask_db") # change the details as per your db config.
+            # change the details as per your db config.
+            self.conn = mysql.connector.connect(
+                host=dbconfig['hostname'],
+                user=dbconfig['username'],
+                password=dbconfig['password'],
+                database=dbconfig['datbase']
+            )
             print('Connection Established Successfully')
             self.conn.autocommit=True # Automatically commit() to the database once POST, PUT, DELETE queries are executed.
             self.cur = self.conn.cursor(dictionary=True) # Cursor will help in query execution and interaction with database
@@ -19,13 +26,15 @@ class auth_model():
             print('Some error occured. Connect not established', e)
 
     # Creating a JWT auth decorator
-    def token_auth(self, endpoint):
+    def token_auth(self, endpoint=""):
         def inner1(func):
             # To solve this error:
             # AssertionError: View function mapping is overwriting an existing endpoint function: inner2
             @wraps(func)
             def inner2(*args):
+                endpoint = request.url_rule # it's getting endpoint from request (dynamic)
                 authorization = request.headers.get("Authorization")
+                print("➡ authorization :", authorization)
                 if re.match("Bearer *([^ ]+) *$", authorization, flags=0):
                     token = authorization.split(" ")[1]
 
@@ -35,7 +44,9 @@ class auth_model():
                         return make_response({"ERROR": "TOKEN EXPIRED"}, 401)
                     
                     role_id = jwt_decoded['payload']['role_id']
+                    print("➡ role_id :", role_id)
                     get_role_query = f"SELECT roles FROM acceessibility_view WHERE endpoint='{endpoint}'"
+                    print("➡ get_role_query :", get_role_query)
                     self.cur.execute(get_role_query)
                     result = self.cur.fetchall()
 

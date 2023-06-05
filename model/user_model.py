@@ -5,13 +5,20 @@ from utils import create_response
 from flask import make_response
 from datetime import datetime, timedelta
 import jwt
+from config.config import dbconfig
 class user_model():
 
     # Initializing constructor and establishing connection first.
     def __init__(self):
         # mysql database connection establishment between python and mysql
         try:
-            self.conn = mysql.connector.connect(host="localhost", user="flask_user", password="Admin@123", database="flask_db") # change the details as per your db config.
+            # change the details as per your db config.
+            self.conn = mysql.connector.connect(
+                host=dbconfig['hostname'],
+                user=dbconfig['username'],
+                password=dbconfig['password'],
+                database=dbconfig['datbase']
+            ) 
             print('Connection Established Successfully')
             self.conn.autocommit=True # Automatically commit() to the database once POST, PUT, DELETE queries are executed.
             self.cur = self.conn.cursor(dictionary=True) # Cursor will help in query execution and interaction with database

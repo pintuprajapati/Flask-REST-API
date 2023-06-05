@@ -7,30 +7,30 @@ from datetime import datetime
 obj = user_model()
 auth = auth_model()
 
-@app.route('/user/getall')
-@auth.token_auth('/user/getall/') # jwt_auth decorator
+@app.route('/user/getall/')
+@auth.token_auth() # jwt_auth decorator
 def user_getall_controller():
     return obj.user_getall_model()
 
-@app.route('/user/addone', methods=["POST"])
-@auth.token_auth('/user/addone/') # jwt_auth decorator# jwt_auth decorator
+@app.route('/user/addone/', methods=["POST"])
+@auth.token_auth() # jwt_auth decorator# jwt_auth decorator
 def user_addone_controller():
     return obj.user_addone_model(request.form) # this request.form, we are getting from POSTMAN "body" section. "Form-Encode" 
 
-@app.route('/user/update', methods=["PUT"])
+@app.route('/user/update/', methods=["PUT"])
 def user_update_controller():
     return obj.user_update_model(request.form)
 
-@app.route('/user/delete/<id>', methods=["DELETE"])
+@app.route('/user/delete/<id>/', methods=["DELETE"])
 def user_delete_controller(id):
     return obj.user_delete_model(id)
 
-@app.route('/user/patch/<id>', methods=["PATCH"])
+@app.route('/user/patch/<id>/', methods=["PATCH"])
 def user_patch_controller(id):
     return obj.user_patch_model(request.form, id)
 
 # Pagination endpoint
-@app.route('/user/getall/limit/<limit_rows>/page/<page_no>', methods=["GET"])
+@app.route('/user/getall/limit/<limit_rows>/page/<page_no>/', methods=["GET"])
 def user_pagination_controller(limit_rows, page_no):
     return obj.user_pagination_model(limit_rows, page_no)
 
@@ -46,7 +46,7 @@ def user_avatar_upload_controller(uid):
     return obj.user_avatar_upload_model(uid, file_path)
 
 # fetch the file from db
-@app.route("/uploads/<filename>")
+@app.route("/uploads/<filename>/")
 def user_getavatar_controller(filename):
     return send_file(f"uploads/{filename}")
 
