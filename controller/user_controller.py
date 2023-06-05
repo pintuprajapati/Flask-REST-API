@@ -1,15 +1,19 @@
 from app import app
 from model.user_model import user_model
+from model.auth_model import auth_model
 from flask import request, send_file
 from datetime import datetime
 
 obj = user_model()
+auth = auth_model()
 
 @app.route('/user/getall')
+@auth.token_auth('/user/getall/') # jwt_auth decorator
 def user_getall_controller():
     return obj.user_getall_model()
 
 @app.route('/user/addone', methods=["POST"])
+@auth.token_auth('/user/addone/') # jwt_auth decorator# jwt_auth decorator
 def user_addone_controller():
     return obj.user_addone_model(request.form) # this request.form, we are getting from POSTMAN "body" section. "Form-Encode" 
 

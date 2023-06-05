@@ -53,7 +53,7 @@ ALTER TABLE flask_db.users ADD CONSTRAINT users_FK FOREIGN KEY (`role_id`) REFER
 ## Create "Endpoint" table
 # Create id, endpoint, method
 """
-CREATE TABLE flask_db.endpoint (
+CREATE TABLE flask_db.endpoints (
 	`id` bigint unsigned NOT NULL AUTO_INCREMENT,
 	`endpoint` varchar(100) NULL,
 	`method` varchar(20) NULL,
@@ -68,7 +68,7 @@ CREATE TABLE flask_db.endpoint (
 CREATE TABLE flask_db.acceessibility (
 	`id` bigint unsigned NOT NULL AUTO_INCREMENT,
 	`endpoint_id` bigint unsigned NULL,
-	`method` LONGTEXT NULL,
+	`roles` LONGTEXT NULL,
     PRIMARY KEY (`id`)
 )
 """
@@ -77,3 +77,14 @@ CREATE TABLE flask_db.acceessibility (
 """
 ALTER TABLE flask_db.acceessibility ADD CONSTRAINT acceessibility_FK FOREIGN KEY (id) REFERENCES flask_db.endpoint(id) ON UPDATE CASCADE;
 """
+
+####### Create View #######
+# Create a VIEW after joining two tables: endpoints and accessibility
+"""
+CREATE VIEW `accessibility_view` AS SELECT
+endponts.endpoint,
+accessibility.roles
+FROM endpoints join accessibility
+WHERE endpoints.id = accessibility.endpoint_id;
+"""
+
