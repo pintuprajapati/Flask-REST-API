@@ -2,3 +2,4 @@ flask==2.3.2
 pip-chill==1.0.3
 python-dotenv==1.0.0
 mysql-connector-python==8.0.33
+pyjwt==2.7.0

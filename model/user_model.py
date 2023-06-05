@@ -3,6 +3,8 @@ import json
 from flask import jsonify
 from utils import create_response
 from flask import make_response
+from datetime import datetime, timedelta
+import jwt
 class user_model():
 
     # Initializing constructor and establishing connection first.
@@ -116,4 +118,19 @@ class user_model():
             return create_response(success=True, message="Nothing to upload", status_code=204)
         except Exception as e:
             return create_response(success=False, message="Some error occured while uploading the file", status_code=400)
+
+    # user login model
+    def user_login_model(self, data):
+        login_query = f"SELECT id, name, email, phone, avatar, role_id FROM users WHERE email='{data['email']}' AND password='{data['password']}'"
+        self.cur.execute(login_query)
+        result = self.cur.fetchall()
+        userdata = result[0]
+        expiry_time = datetime.now() + timedelta(minutes=15)
+        expiry_epoch_time = int(expiry_time.timestamp())
+        payload = {
+            "payload": userdata,
+            "exp": expiry_epoch_time
+        }
+        jwt_token = jwt.encode(payload, "test1", algorithm="HS256")
+        return make_response({"token": jwt_token}, 200)
 
